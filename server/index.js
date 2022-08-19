@@ -1,4 +1,5 @@
 const express = require("express");
+const mongoose = require("mongoose");
 const app = express();
 const port = 8080;
 
@@ -7,5 +8,13 @@ app.get("/", (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  mongoose
+    .connect(
+      "mongodb+srv://sosorry:mjchoi12@todolist.bih5hu2.mongodb.net/?retryWrites=true&w=majority"
+    )
+    .then(() => {
+      console.log("mongoDB connect...");
+      console.log(`Example app listening on port ${port}`);
+    })
+    .catch((err) => console.log(err));
 });
