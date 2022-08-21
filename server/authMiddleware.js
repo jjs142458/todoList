@@ -22,4 +22,5 @@ exports.auth = (req, res, next) => {
       });
     }
   }
+  2;
 };
