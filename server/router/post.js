@@ -41,7 +41,7 @@ router.post("/submit", (req, res) => {
 router.put("/update", (req, res) => {
   let data = {
     id: 3,
-    content: "씨발  ",
+    content: "씨발 ",
     isdone: 1,
   };
 
@@ -61,7 +61,7 @@ router.put("/update", (req, res) => {
 router.delete("/delete", (req, res) => {
   let data = {
     id: 3,
-    content: "씨발  ",
+    content: "씨발 ",
     isdone: 1,
   };
   db.query(`DELETE FROM todo WHERE id = ?`, [data.id], (err, todoList) => {
