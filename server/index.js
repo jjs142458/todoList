@@ -3,13 +3,14 @@ const path = require("path");
 const mongoose = require("mongoose");
 const mysql = require("mysql");
 const session = require("express-session");
+require("dotenv").config();
 const FileStore = require("session-file-store")(session);
 const app = express();
 const port = 8080;
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "mjchoi12##",
+  host: process.env.DB_MYSQL_HOST,
+  user: process.env.DB_MYSQL_USER,
+  password: process.env.DB_MYSQL_PASSWORD,
   database: "user",
 });
 db.connect();
@@ -32,7 +33,7 @@ app.use("/api/post", require("./router/post.js"));
 app.listen(port, () => {
   mongoose
     .connect(
-      "mongodb+srv://sosorry:mjchoi12@todolist.bih5hu2.mongodb.net/?retryWrites=true&w=majority"
+      `mongodb+srv://${process.env.DB_MONGO_ID}:${process.env.DB_MONGO_PASS}@todolist.bih5hu2.mongodb.net/?retryWrites=true&w=majority`
     )
     .then(() => {
       console.log("mongoDB connect...");
