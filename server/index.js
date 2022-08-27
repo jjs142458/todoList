@@ -58,7 +58,7 @@ app.get("/", (req, res) => {
 });
 
 // 1. 회원가입 페이지 만들기
-//  - 유저 id, 유저 pwd, 유저 name, 유저 email, 유저 권한
+//  - 유저 id, 유저 pwd, 유저 name, 유저 email, 유저 권한 (ok)
 // 2. 유저인증
 //  - session
 
