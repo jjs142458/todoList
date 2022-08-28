@@ -43,20 +43,32 @@ app.listen(port, () => {
 });
 
 let authData = {
-  email: "abcde@naver.com",
-  password: "11111",
-  user_name: "TLqkf",
+  email: "mnbvc@naver.com",
+  password: "33333",
+  user_name: "Tlqkf",
 };
 
 app.get("/", (req, res) => {
-  if (req.session.num === undefined) {
-    req.session.num = 1;
-  } else {
-    req.session.num = req.session.num + 1;
-  }
-  res.send(`${req.session.num}`);
+  res.send(`${req.session?.user_name}`);
 });
 
+app.get("/loguout", (req, res) => {
+  let session = req.session;
+
+  if (session.isLogin) {
+    // 로그인되어있으면, session.destroy 한다.
+    session.destroy((err) => {
+      if (err) {
+        res.sendStatus(500);
+      } else {
+        console.log("로그아웃 성공");
+        res.sendStatus(200);
+      }
+    });
+  } else {
+    res.sendStatus(200);
+  }
+});
 // 1. 회원가입 페이지 만들기
 //  - 유저 id, 유저 pwd, 유저 name, 유저 email, 유저 권한 (ok)
 // 2. 유저인증
@@ -68,7 +80,6 @@ app.post("/userlist", (req, res) => {
       console.log(err);
     }
     console.log(userList);
-    db.end();
   });
 });
 
@@ -81,6 +92,40 @@ app.post("/submit", (req, res) => {
         console.log(err);
       }
       console.log(userList);
+    }
+  );
+});
+
+app.get("/login", (req, res) => {
+  let userData = {
+    user_name: "abcde", // 유저가 전송한 데이터
+    password: "22222",
+    email: "asdfg@naver.com",
+  };
+
+  db.query(
+    `SELECT * FROM user WHERE user_name = ?`,
+    [userData.user_name],
+    (err, userList) => {
+      if (err) {
+        console.log(err);
+      }
+
+      if (req.session.isLogin) {
+        res.send(
+          `이미 로그인 되어 있습니다. 로그인 된 계정명 : ${req.session.user_name}`
+        );
+      } else if (
+        userList[0].password === userData.password &&
+        userList[0].email === userData.email
+      ) {
+        req.session.isLogin = true;
+        req.session.user_name = userData.user_name;
+        res.status(200);
+        res.send(`로그인 되었습니다 : ${userData.user_name}`);
+      } else {
+        res.status(400);
+      }
     }
   );
 });
