@@ -49,26 +49,10 @@ let authData = {
 };
 
 app.get("/", (req, res) => {
-  res.send(`${req.session?.user_name}`);
+  console.log(req.session);
+  res.send(`${req.session?.user?.user_name}`);
 });
 
-app.get("/loguout", (req, res) => {
-  let session = req.session;
-
-  if (session.isLogin) {
-    // 로그인되어있으면, session.destroy 한다.
-    session.destroy((err) => {
-      if (err) {
-        res.sendStatus(500);
-      } else {
-        console.log("로그아웃 성공");
-        res.sendStatus(200);
-      }
-    });
-  } else {
-    res.sendStatus(200);
-  }
-});
 // 1. 회원가입 페이지 만들기
 //  - 유저 id, 유저 pwd, 유저 name, 유저 email, 유저 권한 (ok)
 // 2. 유저인증
@@ -98,9 +82,9 @@ app.post("/submit", (req, res) => {
 
 app.get("/login", (req, res) => {
   let userData = {
-    user_name: "abcde", // 유저가 전송한 데이터
-    password: "22222",
-    email: "asdfg@naver.com",
+    user_name: "sosorry", // 유저가 전송한 데이터
+    password: "142458",
+    email: "jjs142458@naver.com",
   };
 
   db.query(
@@ -110,22 +94,44 @@ app.get("/login", (req, res) => {
       if (err) {
         console.log(err);
       }
+      console.log("login", req.session);
 
       if (req.session.isLogin) {
         res.send(
           `이미 로그인 되어 있습니다. 로그인 된 계정명 : ${req.session.user_name}`
         );
+        console.log(req.session);
       } else if (
         userList[0].password === userData.password &&
         userList[0].email === userData.email
       ) {
-        req.session.isLogin = true;
-        req.session.user_name = userData.user_name;
-        res.status(200);
-        res.send(`로그인 되었습니다 : ${userData.user_name}`);
+        req.session.user = {
+          isLogin: true,
+          user_name: userData.user_name,
+        };
+        console.log(req.session);
+        res.status(200).send(`로그인 되었습니다 : ${userData.user_name}`);
       } else {
-        res.status(400);
+        res.send("회원 정보가 없습니다.");
       }
     }
   );
+});
+
+app.get("/logout", (req, res) => {
+  let session = req.session;
+
+  if (session.user.isLogin === null) {
+    res.send("로그인 되어있지 않습니다.");
+  } else {
+    session.destroy((err) => {
+      if (err) {
+        console.log(err);
+        return;
+      }
+      console.log("로그아웃 완료");
+      res.status(201);
+      res.redirect("/");
+    });
+  }
 });
